@@ -19,11 +19,11 @@ from nltk import word_tokenize
 from sklearn.feature_extraction.text import CountVectorizer #Data transformation
 
 
-data=pd.read_csv("labeled_data.csv")
-data["hate_speech"]=data["hate_speech"]+data["offensive_language"]
-data["class"]=data.hate_speech<data.neither
-data.drop(["Unnamed: 0","count","hate_speech","offensive_language","neither"],axis=1,inplace=True)
-data.columns=["sentiment","text"]
+# data=pd.read_csv("labeled_data.csv")
+# data["hate_speech"]=data["hate_speech"]+data["offensive_language"]
+# data["class"]=data.hate_speech<data.neither
+# data.drop(["Unnamed: 0","count","hate_speech","offensive_language","neither"],axis=1,inplace=True)
+# data.columns=["sentiment","text"]
 
 def preprocess(data):
     #Text transformation
@@ -34,41 +34,47 @@ def preprocess(data):
 
 
 
-def process_sentiment(s):
-    if s:return 1;
-    return 0;
+# def process_sentiment(s):
+#     if s:return 1;
+#     return 0;
 
-data["sentiment"]=data["sentiment"].apply(process_sentiment)
+# data["sentiment"]=data["sentiment"].apply(process_sentiment)
 
-processed_data=preprocess(data);
+# processed_data=preprocess(data);
 
-#Text splitting
-tokens_text = [word_tokenize(str(word)) for word in processed_data]
+# #Text splitting
+# tokens_text = [word_tokenize(str(word)) for word in processed_data]
 
-#Unique word counter
-tokens_counter = [item for sublist in tokens_text for item in sublist]
+# #Unique word counter
+# tokens_counter = [item for sublist in tokens_text for item in sublist]
 
 stopwords_nltk = nltk.corpus.stopwords
 stop_words = stopwords_nltk.words('english')
 
 
-#Initial Bag of Words
+# #Initial Bag of Words
 bow_counts = CountVectorizer(
     tokenizer=word_tokenize,
     stop_words=stop_words, #English Stopwords
     ngram_range=(1, 2) #analysis of one word
 )
-text=processed_data
-sentiment=data.sentiment
-X_train, X_test, y_train, y_test = train_test_split(text, sentiment, test_size = 0.2)
+# text=processed_data
+# sentiment=data.sentiment
+# X_train, X_test, y_train, y_test = train_test_split(text, sentiment, test_size = 0.2)
 
-#Creation of encoding related to train dataset
-X_train_bow = bow_counts.fit_transform(X_train)
-#Transformation of test dataset with train encoding
-X_test_bow = bow_counts.transform(X_test)
+# #Creation of encoding related to train dataset
+# X_train_bow = bow_counts.fit_transform(X_train)
+# #Transformation of test dataset with train encoding
+# X_test_bow = bow_counts.transform(X_test)
 
-LRmodel = LogisticRegression(C = 2, max_iter = 1000, n_jobs=-1)
-LRmodel.fit(X_train_bow, y_train)
+# LRmodel = LogisticRegression(C = 2, max_iter = 1000, n_jobs=-1)
+# LRmodel.fit(X_train_bow, y_train)
+
+import pickle
+# Load the model from the file
+with open('model.pkl', 'rb') as f:
+    LRmodel = pickle.load(f)
+
 
 def predict(bow_counts,model, data):
     print("pred")
